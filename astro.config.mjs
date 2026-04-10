@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
+import sanity from '@sanity/astro';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,6 +18,13 @@ export default defineConfig({
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
+    }),
+    react(),
+    sanity({
+      projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'zqjtioxi',
+      dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+      useCdn: false,
+      studioBasePath: '/admin',
     }),
   ],
   vite: {
