@@ -21,6 +21,6 @@
     "astro": "^6.1.5",
     "astro-portabletext": "^0.13.0",
     "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2"
+    "typescript": "^5.8.3"
   }
 }
