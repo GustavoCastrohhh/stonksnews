@@ -1,0 +1,60 @@
+---
+import type { Category } from '../../types/sanity';
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-neutral-200 bg-neutral-900 text-neutral-300">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <!-- Brand -->
+      <div>
+        <a href="/" class="text-xl font-bold text-white">Portal</a>
+        <p class="mt-3 text-sm leading-relaxed text-neutral-400">
+          Conteúdo de qualidade organizado por categorias.
+        </p>
+      </div>
+
+      <!-- Categorias -->
+      <nav aria-label="Categorias do site">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Categorias
+        </h2>
+        <ul class="space-y-2" role="list">
+          {
+            categories.map((cat) => (
+              <li>
+                <a
+                  href={`/${cat.slug.current}/`}
+                  class="text-sm transition-colors hover:text-white"
+                >
+                  {cat.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Legal -->
+      <div>
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Legal
+        </h2>
+        <ul class="space-y-2 text-sm" role="list">
+          <li><a href="/politica-de-privacidade" class="transition-colors hover:text-white">Política de Privacidade</a></li>
+          <li><a href="/termos-de-uso" class="transition-colors hover:text-white">Termos de Uso</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-neutral-800 pt-8 text-center text-sm text-neutral-500">
+      &copy; {year} Portal. Todos os direitos reservados.
+    </div>
+  </div>
+</footer>

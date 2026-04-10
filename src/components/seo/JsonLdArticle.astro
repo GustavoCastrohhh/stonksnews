@@ -1,0 +1,42 @@
+---
+import type { Post } from '../../types/sanity';
+import { ogImageUrl } from '../../lib/imageUrl';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.publishedAt,
+  dateModified: post.publishedAt,
+  url: Astro.url.href,
+  image: post.ogImage
+    ? ogImageUrl(post.ogImage)
+    : post.coverImage
+      ? ogImageUrl(post.coverImage)
+      : undefined,
+  author: post.author
+    ? {
+        '@type': 'Person',
+        name: post.author.name,
+      }
+    : undefined,
+  publisher: {
+    '@type': 'Organization',
+    name: 'Portal',
+    url: Astro.site?.href,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': Astro.url.href,
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

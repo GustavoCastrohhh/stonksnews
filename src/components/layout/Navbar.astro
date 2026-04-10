@@ -1,0 +1,97 @@
+---
+import type { Category } from '../../types/sanity';
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-sm">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav
+      class="flex h-16 items-center justify-between"
+      aria-label="Navegação principal"
+    >
+      <!-- Logo -->
+      <a
+        href="/"
+        class="text-xl font-bold text-brand-600 transition-colors hover:text-brand-700"
+        aria-label="Ir para a página inicial"
+      >
+        Portal
+      </a>
+
+      <!-- Links de categorias — desktop -->
+      <ul
+        class="hidden items-center gap-1 md:flex"
+        role="list"
+      >
+        {
+          categories.map((cat) => {
+            const href = `/${cat.slug.current}/`;
+            const isActive = currentPath.startsWith(`/${cat.slug.current}`);
+            return (
+              <li>
+                <a
+                  href={href}
+                  class:list={[
+                    'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                  ]}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {cat.name}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <!-- Menu mobile toggle (sem JS → checkbox hack) -->
+      <label
+        for="mobile-menu-toggle"
+        class="flex cursor-pointer flex-col gap-1.5 p-2 md:hidden"
+        aria-label="Abrir menu de navegação"
+      >
+        <span class="block h-0.5 w-6 bg-neutral-700"></span>
+        <span class="block h-0.5 w-6 bg-neutral-700"></span>
+        <span class="block h-0.5 w-6 bg-neutral-700"></span>
+      </label>
+    </nav>
+  </div>
+
+  <!-- Mobile menu (CSS-only) -->
+  <input type="checkbox" id="mobile-menu-toggle" class="peer sr-only" />
+  <div class="hidden border-t border-neutral-200 bg-neutral-50 peer-checked:block md:hidden">
+    <ul class="mx-auto max-w-7xl space-y-1 px-4 py-3" role="list">
+      {
+        categories.map((cat) => {
+          const href = `/${cat.slug.current}/`;
+          const isActive = currentPath.startsWith(`/${cat.slug.current}`);
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={[
+                  'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-brand-50 text-brand-700'
+                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                ]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {cat.name}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</header>

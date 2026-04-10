@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import RelatedPosts from '../../components/ui/RelatedPosts.astro';
+import JsonLdArticle from '../../components/seo/JsonLdArticle.astro';
+import { getAllPostSlugs, getPostBySlug, getRelatedPosts } from '../../lib/queries';
+import { coverImageUrl, ogImageUrl } from '../../lib/imageUrl';
+import { PortableText } from 'astro-portabletext';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getAllPostSlugs();
+
+  return slugs.map(({ categorySlug, postSlug }) => ({
+    params: { category: categorySlug, slug: postSlug },
+    props: { slug: postSlug },
+  }));
+};
+
+interface Props { slug: string; }
+const { slug } = Astro.props;
+const post = await getPostBySlug(slug);
+
+// Redireciona se post não encontrado (não deve ocorrer em SSG)
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const relatedPosts = await getRelatedPosts(post.category._id, post._id);
+
+const formattedDate = new Date(post.publishedAt).toLocaleDateString('pt-BR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const pageTitle = post.seoTitle ?? post.title;
+const pageDescription = post.seoDescription ?? post.excerpt ?? '';
+const ogImage = post.ogImage
+  ? ogImageUrl(post.ogImage)
+  : post.coverImage
+  ? ogImageUrl(post.coverImage)
+  : undefined;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  {
+    label: post.category.name,
+    href: `/${post.category.slug.current}/`,
+  },
+  { label: post.title, href: Astro.url.pathname },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  ogImage={ogImage}
+  type="article"
+>
+  <!-- JSON-LD Article -->
+  <JsonLdArticle post={post} />
+
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Cabeçalho do post -->
+    <header class="mb-10">
+      <!-- Categoria badge -->
+      <a
+        href={`/${post.category.slug.current}/`}
+        class="mb-4 inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 transition-colors hover:bg-brand-100"
+      >
+        {post.category.name}
+      </a>
+
+      <h1 class="mt-3 text-3xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl">
+        {post.title}
+      </h1>
+
+      {post.excerpt && (
+        <p class="mt-4 text-xl leading-relaxed text-neutral-500">
+          {post.excerpt}
+        </p>
+      )}
+
+      <!-- Meta: autor e data -->
+      <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-neutral-400">
+        {post.author && (
+          <span>
+            Por <span class="font-medium text-neutral-600">{post.author.name}</span>
+          </span>
+        )}
+        <time datetime={post.publishedAt}>
+          Publicado em {formattedDate}
+        </time>
+      </div>
+    </header>
+
+    <!-- Imagem de capa -->
+    {
+      post.coverImage && (
+        <figure class="mb-10">
+          <img
+            src={coverImageUrl(post.coverImage)}
+            alt={post.coverImage.alt ?? post.title}
+            width={800}
+            height={450}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            class="w-full rounded-2xl object-cover shadow-sm"
+          />
+        </figure>
+      )
+    }
+
+    <!-- Conteúdo Rich Text -->
+    <div class="prose">
+      <PortableText value={post.body} />
+    </div>
+
+    <!-- Posts relacionados do mesmo silo -->
+    <RelatedPosts posts={relatedPosts} />
+  </div>
+</BaseLayout>

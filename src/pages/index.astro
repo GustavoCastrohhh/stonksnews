@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/ui/PostCard.astro';
+import { getAllCategories, getLatestPosts } from '../lib/queries';
+
+const categories = await getAllCategories();
+const latestPosts = await getLatestPosts(6);
+---
+
+<BaseLayout
+  title="Portal — Conteúdo de Qualidade"
+  description="Explore artigos e guias organizados por categorias."
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-brand-600 to-brand-800 py-24 text-white">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        Conteúdo que importa
+      </h1>
+      <p class="mt-6 text-lg leading-relaxed text-brand-200 sm:text-xl">
+        Artigos, guias e referências organizados por categorias.<br />
+        Zero ruído — direto ao ponto.
+      </p>
+    </div>
+  </section>
+
+  <!-- Categorias -->
+  {
+    categories.length > 0 && (
+      <section class="border-b border-neutral-200 bg-white py-10">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <nav aria-label="Categorias disponíveis">
+            <ul class="flex flex-wrap justify-center gap-3" role="list">
+              {categories.map((cat) => (
+                <li>
+                  <a
+                    href={`/${cat.slug.current}/`}
+                    class="rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition-all hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700"
+                  >
+                    {cat.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Últimos posts -->
+  <section class="py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="mb-10 text-2xl font-bold text-neutral-900">Publicações Recentes</h2>
+
+      {
+        latestPosts.length > 0 ? (
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {latestPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="rounded-2xl border border-dashed border-neutral-200 py-24 text-center">
+            <p class="text-neutral-400">Nenhum artigo publicado ainda.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,52 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonicalURL?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = 'Portal de conteúdo de alta performance.',
+  ogImage,
+  canonicalURL = Astro.url.href,
+  type = 'website',
+} = Astro.props;
+
+const siteName = 'Portal';
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+---
+
+<!-- Charset & Viewport -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- SEO Básico -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:site_name" content={siteName} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImage && <meta property="og:image:width" content="1200" />}
+{ogImage && <meta property="og:image:height" content="630" />}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Preconnect zero-runtime (sem Google Fonts) -->
+<!-- Fontes locais já declaradas em global.css -->
