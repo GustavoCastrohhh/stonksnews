@@ -5,7 +5,7 @@ import { schemaTypes } from './sanity/schemas'
 
 export default defineConfig({
   name: 'default',
-  title: 'Portal CMS',
+  title: 'StonksNews CMS',
 
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID || 'zqjtioxi',
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',

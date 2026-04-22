@@ -9,13 +9,13 @@ interface Props {
 
 const {
   title,
-  description = 'Portal de conteúdo de alta performance.',
+  description = 'StonksNews de conteúdo de alta performance.',
   ogImage,
   canonicalURL = Astro.url.href,
   type = 'website',
 } = Astro.props;
 
-const siteName = 'Portal';
+const siteName = 'StonksNews';
 const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 ---
 

@@ -8,7 +8,7 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://portal.vercel.app',
+  site: process.env.SITE_URL || 'https://stonksnews.vercel.app',
   output: 'static',
   adapter: vercel({
     webAnalytics: { enabled: true },
