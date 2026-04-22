@@ -21,8 +21,8 @@ export default defineConfig({
     }),
     react(),
     sanity({
-      projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'zqjtioxi',
-      dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+      projectId: process.env.PUBLIC_SANITY_PROJECT_ID || 'zqjtioxi',
+      dataset: process.env.PUBLIC_SANITY_DATASET || 'production',
       useCdn: false,
       studioBasePath: '/admin',
     }),

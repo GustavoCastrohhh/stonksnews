@@ -41,17 +41,17 @@
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-50:  #f0f4ff;
-  --color-brand-100: #e0e9ff;
-  --color-brand-200: #c7d7fe;
-  --color-brand-300: #a5b9fc;
-  --color-brand-400: #8192f8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
-  --color-brand-950: #1e1b4b;
+  --color-brand-50:  #f0fcfb;
+  --color-brand-100: #ccf5f0;
+  --color-brand-200: #99ebe1;
+  --color-brand-300: #5cdccf;
+  --color-brand-400: #29c7b9;
+  --color-brand-500: #0ba59a;
+  --color-brand-600: #00877d;
+  --color-brand-700: #01665f;
+  --color-brand-800: #004c44;
+  --color-brand-900: #00362f;
+  --color-brand-950: #002924;
 
   --color-neutral-50:  #f8fafc;
   --color-neutral-100: #f1f5f9;

@@ -1,57 +1,185 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/ui/PostCard.astro';
-import { getAllCategories, getLatestPosts } from '../lib/queries';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/ui/PostCard.astro";
+import { getAllCategories, getLatestPosts, getPostsByCategory } from "../lib/queries";
+import { coverImageUrl, thumbnailUrl } from "../lib/imageUrl";
 
 const categories = await getAllCategories();
 const latestPosts = await getLatestPosts(6);
+const primaryCategorySlug = categories.length > 0 ? categories[0].slug.current : null;
+const heroPosts = primaryCategorySlug ? await getPostsByCategory(primaryCategorySlug) : await getLatestPosts(4);
+const top4 = heroPosts.slice(0, 4);
+const featuredPost = top4[0];
+const sidePosts = top4.slice(1, 4);
+
+// Categories
+const catApps = categories.find(c => c.slug.current.includes('aplicativos') || c.name.includes('Aplicativos'));
+const catTips = categories.find(c => c.slug.current.includes('dicas') || c.name.includes('Dicas'));
+const catIA = categories.find(c => c.slug.current.includes('inteligencia') || c.name.includes('Inteligência') || c.name === 'IA');
+
+const appsPostsRef = catApps ? await getPostsByCategory(catApps.slug.current) : [];
+const tipsPostsRef = catTips ? await getPostsByCategory(catTips.slug.current) : [];
+const iaPostsRef = catIA ? await getPostsByCategory(catIA.slug.current) : [];
+
+const appsPosts = appsPostsRef.slice(0, 4);
+const tipsPosts = tipsPostsRef.slice(0, 4);
+const iaPosts = iaPostsRef.slice(0, 4);
+
+const trendingPosts = await getLatestPosts(5); // Em Alta
 ---
 
 <BaseLayout
   title="Portal — Conteúdo de Qualidade"
   description="Explore artigos e guias organizados por categorias."
 >
-  <!-- Hero -->
-  <section class="bg-gradient-to-br from-brand-600 to-brand-800 py-24 text-white">
-    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-        Conteúdo que importa
-      </h1>
-      <p class="mt-6 text-lg leading-relaxed text-brand-200 sm:text-xl">
-        Artigos, guias e referências organizados por categorias.<br />
-        Zero ruído — direto ao ponto.
-      </p>
+  <!-- Destaques -->
+  <section class="bg-neutral-50 pt-10 pb-6 border-b border-neutral-200">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {top4.length > 0 && featuredPost && (
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+          <!-- Post Principal (Esquerda) -->
+          <article class="lg:col-span-8 group flex flex-col">
+            <a href={`/${featuredPost.category.slug.current}/${featuredPost.slug.current}/`} tabindex="-1" class="block w-full overflow-hidden rounded-2xl mb-5 border border-neutral-200">
+              {featuredPost.coverImage ? (
+                <img src={coverImageUrl(featuredPost.coverImage, 800)} alt={featuredPost.title} loading="eager" decoding="async" class="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              ) : (
+                <div class="aspect-[16/9] w-full bg-neutral-100 flex items-center justify-center text-4xl">📄</div>
+              )}
+            </a>
+            <div>
+              <a href={`/${featuredPost.category.slug.current}/`} class="text-brand-600 font-bold tracking-wide text-sm mb-2 sm:mb-3 inline-block hover:text-brand-700 transition-colors">
+                {featuredPost.category.name}
+              </a>
+              <h2 class="text-neutral-900 text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight">
+                <a href={`/${featuredPost.category.slug.current}/${featuredPost.slug.current}/`} class="hover:text-brand-600 transition-colors">
+                  {featuredPost.title}
+                </a>
+              </h2>
+            </div>
+          </article>
+
+          <!-- Posts Secundários (Direita) -->
+          <div class="lg:col-span-4 flex flex-col justify-between space-y-6 lg:space-y-0">
+            {sidePosts.map((post) => (
+              <article class="group relative flex items-center gap-4">
+                <a href={`/${post.category.slug.current}/${post.slug.current}/`} tabindex="-1" class="block w-1/2 max-w-[160px] aspect-[4/3] flex-shrink-0 overflow-hidden rounded-xl border border-neutral-200">
+                  {post.coverImage ? (
+                    <img src={thumbnailUrl(post.coverImage)} alt={post.title} loading="eager" decoding="async" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <div class="h-full w-full bg-neutral-100 flex items-center justify-center text-2xl">📄</div>
+                  )}
+                </a>
+                <div class="flex flex-col justify-center">
+                  <a href={`/${post.category.slug.current}/`} class="text-brand-600 font-medium text-xs mb-1 hover:text-brand-700 transition-colors">
+                    {post.category.name}
+                  </a>
+                  <h3 class="text-neutral-900 font-medium leading-tight text-sm sm:text-base line-clamp-3">
+                    <a href={`/${post.category.slug.current}/${post.slug.current}/`} class="hover:text-brand-600 transition-colors after:absolute after:inset-0">
+                      {post.title}
+                    </a>
+                  </h3>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </section>
 
-  <!-- Categorias -->
-  {
-    categories.length > 0 && (
-      <section class="border-b border-neutral-200 bg-white py-10">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Categorias disponíveis">
-            <ul class="flex flex-wrap justify-center gap-3" role="list">
-              {categories.map((cat) => (
-                <li>
-                  <a
-                    href={`/${cat.slug.current}/`}
-                    class="rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition-all hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700"
-                  >
-                    {cat.name}
-                  </a>
+
+  <!-- Corpo Principal -->
+  <section class="py-12 bg-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Blocos por Categoria (Esquerda - 8 colunas) -->
+        <div class="lg:col-span-8 flex flex-col space-y-12">
+          
+          <!-- Categoria: Aplicativos -->
+          {catApps && appsPosts.length > 0 && (
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                 <h2 class="text-2xl font-bold text-neutral-900 border-l-4 border-brand-600 pl-3">{catApps.name}</h2>
+                 <a href={`/${catApps.slug.current}/`} class="text-sm font-medium text-brand-600 hover:text-brand-700">Leia mais &rarr;</a>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {appsPosts.map(post => <PostCard post={post} />)}
+              </div>
+            </div>
+          )}
+
+          <!-- Categoria: Dicas Gerais -->
+          {catTips && tipsPosts.length > 0 && (
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                 <h2 class="text-2xl font-bold text-neutral-900 border-l-4 border-brand-600 pl-3">{catTips.name}</h2>
+                 <a href={`/${catTips.slug.current}/`} class="text-sm font-medium text-brand-600 hover:text-brand-700">Leia mais &rarr;</a>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {tipsPosts.map(post => <PostCard post={post} />)}
+              </div>
+            </div>
+          )}
+
+          <!-- Categoria: Inteligência Artificial -->
+          {catIA && iaPosts.length > 0 && (
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                 <h2 class="text-2xl font-bold text-neutral-900 border-l-4 border-brand-600 pl-3">{catIA.name}</h2>
+                 <a href={`/${catIA.slug.current}/`} class="text-sm font-medium text-brand-600 hover:text-brand-700">Leia mais &rarr;</a>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {iaPosts.map(post => <PostCard post={post} />)}
+              </div>
+            </div>
+          )}
+          
+        </div>
+
+        <!-- Lista Em Alta (Direita - 4 colunas) -->
+        <aside class="lg:col-span-4">
+          <div class="bg-brand-900 text-white rounded-2xl p-6 border border-brand-800 sticky top-24 shadow-lg shadow-brand-900/20">
+            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <span class="text-brand-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M3 17l6 -6l4 4l8 -8"></path>
+                  <path d="M14 7l7 0l0 7"></path>
+                </svg>
+              </span>
+              Em Alta
+            </h2>
+            <ol class="space-y-6">
+              {trendingPosts.map((post, idx) => (
+                <li class="relative flex items-start gap-4 group">
+                  <span class="text-4xl font-black text-white/10 group-hover:text-brand-400 transition-colors leading-none">{idx + 1}</span>
+                  <div>
+                    <a href={`/${post.category?.slug?.current ?? ''}/`} class="relative z-10 text-xs font-semibold text-brand-300 uppercase tracking-wider mb-1 block">
+                      {post.category?.name ?? 'Categoria'}
+                    </a>
+                    <h3 class="text-white font-medium leading-snug line-clamp-2">
+                      <a href={`/${post.category?.slug?.current ?? ''}/${post.slug.current}/`} class="hover:text-brand-200 transition-colors after:absolute after:inset-0">
+                        {post.title}
+                      </a>
+                    </h3>
+                  </div>
                 </li>
               ))}
-            </ul>
-          </nav>
-        </div>
-      </section>
-    )
-  }
+            </ol>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
 
   <!-- Últimos posts -->
   <section class="py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 class="mb-10 text-2xl font-bold text-neutral-900">Publicações Recentes</h2>
+      <h2 class="mb-10 text-2xl font-bold text-neutral-900">
+        Publicações Recentes
+      </h2>
 
       {
         latestPosts.length > 0 ? (

@@ -31,6 +31,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
+    "@fontsource/inter": "^5.2.8",
     "@sanity/vision": "^5.20.0",
     "sanity": "^5.20.0"
   }
