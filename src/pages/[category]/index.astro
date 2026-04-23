@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/ui/PostCard.astro';
-import Breadcrumb from '../../components/ui/Breadcrumb.astro';
-import { getAllCategories, getPostsByCategory } from '../../lib/queries';
-import type { GetStaticPaths } from 'astro';
-import type { Category } from '../../types/sanity';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/ui/PostCard.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import { getAllCategories, getPostsByCategory } from "../../lib/queries";
+import type { GetStaticPaths } from "astro";
+import type { Category } from "../../types/sanity";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const categories = await getAllCategories();
@@ -15,16 +15,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-interface Props { category: Category; }
+interface Props {
+  category: Category;
+}
 const { category } = Astro.props;
 const posts = await getPostsByCategory(category.slug.current);
 
-const pageTitle = category.seoTitle ?? `${category.name} — Artigos e Conteúdo`;
+const pageTitle = category.seoTitle ?? `${category.name} | Artigos e Conteúdo`;
 const pageDescription =
   category.description ?? `Explore todos os artigos sobre ${category.name}.`;
 
 const breadcrumbs = [
-  { label: 'Home', href: '/' },
+  { label: "Home", href: "/" },
   { label: category.name, href: `/${category.slug.current}/` },
 ];
 ---
@@ -36,7 +38,9 @@ const breadcrumbs = [
 
     <!-- Cabeçalho do silo -->
     <header class="mb-12">
-      <h1 class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
+      <h1
+        class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl"
+      >
         {category.name}
       </h1>
       {
@@ -47,7 +51,8 @@ const breadcrumbs = [
         )
       }
       <p class="mt-2 text-sm text-neutral-400">
-        {posts.length} {posts.length === 1 ? 'artigo' : 'artigos'}
+        {posts.length}
+        {posts.length === 1 ? "artigo" : "artigos"}
       </p>
     </header>
 
@@ -61,7 +66,9 @@ const breadcrumbs = [
         </div>
       ) : (
         <div class="rounded-2xl border border-dashed border-neutral-300 py-24 text-center">
-          <p class="text-neutral-400">Nenhum artigo publicado nesta categoria ainda.</p>
+          <p class="text-neutral-400">
+            Nenhum artigo publicado nesta categoria ainda.
+          </p>
         </div>
       )
     }
