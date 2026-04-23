@@ -1,5 +1,5 @@
 ---
-import type { Category } from '../../types/sanity';
+import type { Category } from "../../types/sanity";
 
 interface Props {
   categories: Category[];
@@ -9,7 +9,9 @@ const { categories } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-sm">
+<header
+  class="sticky top-0 z-50 border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-sm"
+>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <nav
       class="flex h-16 items-center justify-between"
@@ -18,17 +20,18 @@ const currentPath = Astro.url.pathname;
       <!-- Logo -->
       <a
         href="/"
-        class="text-xl font-bold text-brand-600 transition-colors hover:text-brand-700"
+        class="flex items-center gap-2 transition-opacity hover:opacity-90"
         aria-label="Ir para a página inicial"
       >
-        StonksNews
+        <img
+          src="https://d2qecqbfdcxv7n.cloudfront.net/stonksnews_logo.png"
+          alt="StonksNews Logo"
+          class="h-14 w-auto"
+        />
       </a>
 
       <!-- Links de categorias — desktop -->
-      <ul
-        class="hidden items-center gap-1 md:flex"
-        role="list"
-      >
+      <ul class="hidden items-center gap-1 md:flex" role="list">
         {
           categories.map((cat) => {
             const href = `/${cat.slug.current}/`;
@@ -38,12 +41,12 @@ const currentPath = Astro.url.pathname;
                 <a
                   href={href}
                   class:list={[
-                    'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                      ? "bg-brand-50 text-brand-700"
+                      : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
                   ]}
-                  aria-current={isActive ? 'page' : undefined}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {cat.name}
                 </a>
@@ -68,7 +71,9 @@ const currentPath = Astro.url.pathname;
 
   <!-- Mobile menu (CSS-only) -->
   <input type="checkbox" id="mobile-menu-toggle" class="peer sr-only" />
-  <div class="hidden border-t border-neutral-200 bg-neutral-50 peer-checked:block md:hidden">
+  <div
+    class="hidden border-t border-neutral-200 bg-neutral-50 peer-checked:block md:hidden"
+  >
     <ul class="mx-auto max-w-7xl space-y-1 px-4 py-3" role="list">
       {
         categories.map((cat) => {
@@ -79,12 +84,12 @@ const currentPath = Astro.url.pathname;
               <a
                 href={href}
                 class:list={[
-                  'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                    ? "bg-brand-50 text-brand-700"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
                 ]}
-                aria-current={isActive ? 'page' : undefined}
+                aria-current={isActive ? "page" : undefined}
               >
                 {cat.name}
               </a>
