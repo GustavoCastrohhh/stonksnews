@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import RelatedPosts from "../../components/ui/RelatedPosts.astro";
 import JsonLdArticle from "../../components/seo/JsonLdArticle.astro";
+import PortableTextImage from "../../components/ui/PortableTextImage.astro";
 import {
   getAllPostSlugs,
   getPostBySlug,
@@ -135,7 +136,14 @@ const breadcrumbs = [
 
     <!-- Conteúdo Rich Text -->
     <div class="prose">
-      <PortableText value={post.body} />
+      <PortableText
+        value={post.body}
+        components={{
+          type: {
+            image: PortableTextImage,
+          },
+        }}
+      />
     </div>
 
     <!-- Posts relacionados do mesmo silo -->

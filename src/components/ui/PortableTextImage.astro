@@ -1,0 +1,38 @@
+---
+import { coverImageUrl } from '../../lib/imageUrl';
+import type { SanityImage } from '../../types/sanity';
+import type { Props as PortableTextProps } from 'astro-portabletext/types';
+
+type ImageNode = SanityImage & {
+  _type: 'image';
+  _key: string;
+  alt?: string;
+  caption?: string;
+};
+
+type Props = PortableTextProps<ImageNode>;
+
+const { node } = Astro.props;
+
+if (!node?.asset?._ref) return;
+
+const src = coverImageUrl(node, 800);
+const alt = node.alt ?? '';
+const caption = node.caption;
+---
+
+<figure class="my-8">
+  <img
+    src={src}
+    alt={alt}
+    width={800}
+    loading="lazy"
+    decoding="async"
+    class="w-full rounded-xl object-cover shadow-sm"
+  />
+  {caption && (
+    <figcaption class="mt-2 text-center text-sm text-neutral-400 italic">
+      {caption}
+    </figcaption>
+  )}
+</figure>
